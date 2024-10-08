@@ -1,0 +1,74 @@
+#include <bits/stdc++.h>
+
+using namespace std;
+
+bool isSafe(int x, int y, vector<vector<bool>>& visited, vector<vector<int>>& mat, int n) {
+    return (x >= 0 && x < n && y >= 0 && y < n && mat[x][y] == 1 && !visited[x][y]);
+}
+
+void solve(int n, int i, int j, vector<vector<int>>& mat, vector<vector<bool>>& visited, string path, vector<string>& ans) {
+    // If we reach the bottom-right corner, store the path
+    if (i == n - 1 && j == n - 1) {
+        ans.push_back(path);
+        return;
+    }
+
+    // Mark the current cell as visited
+    visited[i][j] = true;
+
+    // 4 possible movements: down, left, right, up
+    // Move Down
+    if (isSafe(i + 1, j, visited, mat, n)) {
+        solve(n, i + 1, j, mat, visited, path + 'D', ans);
+    }
+    // Move Left
+    if (isSafe(i, j - 1, visited, mat, n)) {
+        solve(n, i, j - 1, mat, visited, path + 'L', ans);
+    }
+    // Move Right
+    if (isSafe(i, j + 1, visited, mat, n)) {
+        solve(n, i, j + 1, mat, visited, path + 'R', ans);
+    }
+    // Move Up
+    if (isSafe(i - 1, j, visited, mat, n)) {
+        solve(n, i - 1, j, mat, visited, path + 'U', ans);
+    }
+
+    // Backtrack: unmark the cell as visited
+    visited[i][j] = false;
+}
+
+int main() {
+    int n;
+    cin >> n;
+    vector<vector<int>> mat(n, vector<int>(n));
+    vector<vector<bool>> visited(n, vector<bool>(n, false));
+    vector<string> ans;
+
+    // Read the matrix input
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            cin >> mat[i][j];
+        }
+    }
+
+    // If the starting cell is not valid, exit
+    if (mat[0][0] == 0) {
+        cout << "No paths available" << endl;
+        return 0;
+    }
+
+    string path = "";
+    solve(n, 0, 0, mat, visited, path, ans);
+
+    // Output the results
+    if (ans.empty()) {
+        cout << "No paths available" << endl;
+    } else {
+        for (const string& p : ans) {
+            cout << p << endl;
+        }
+    }
+
+    return 0;
+}
